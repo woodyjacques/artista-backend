@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateClubDto } from './dto/create-club.dto';
-import { UpdateClubDto } from './dto/update-club.dto';
+import { Club } from './entities/club.entity';
 
 @Injectable()
 export class ClubService {
-  create(createClubDto: CreateClubDto) {
-    return 'This action adds a new club';
+  constructor(
+    @InjectRepository(Club)
+    private readonly clubRepository: Repository<Club>,
+  ) {}
+
+  async createClub(clubData: CreateClubDto): Promise<{ message: string; club: Club }> {
+    const newClub = this.clubRepository.create(clubData);
+    const savedClub = await this.clubRepository.save(newClub);
+    return {
+      message: 'Club creado con éxito',
+      club: savedClub,
+    };
   }
 
-  findAll() {
-    return `This action returns all club`;
+  async findAll(): Promise<Club[]> {
+    return this.clubRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} club`;
+  async updateClub(id: any, updateClub: CreateClubDto): Promise<{ message: string; club: Club }> {
+    const club = await this.clubRepository.findOne({ where: { id } });
+    if (!club) {
+      throw new NotFoundException(`Club con id ${id} no encontrado`);
+    }
+
+    const updatedClub = Object.assign(club, updateClub);
+    await this.clubRepository.save(updatedClub);
+    return {
+      message: 'Club actualizado con éxito',
+      club: updatedClub,
+    };
   }
 
-  update(id: number, updateClubDto: UpdateClubDto) {
-    return `This action updates a #${id} club`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} club`;
+  async deleteClub(id: any): Promise<{ message: string }> {
+    const club = await this.clubRepository.findOne({ where: { id } });
+    if (!club) {
+      throw new NotFoundException(`Club con id ${id} no encontrado`);
+    }
+    await this.clubRepository.remove(club);
+    return { message: 'Club eliminado con éxito' };
   }
 }

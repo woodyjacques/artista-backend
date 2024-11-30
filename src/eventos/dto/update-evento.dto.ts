@@ -1,4 +1,14 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateEventoDto } from './create-evento.dto';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateEventoDto extends PartialType(CreateEventoDto) {}
+export class UpdateEventoDto {
+    @ApiProperty()
+    titulo: string;
+    @ApiProperty()
+    descripcion: string;
+    @ApiProperty()
+    ubicacion: string;
+    @ApiProperty()
+    link: string;
+    @ApiProperty()
+    imagen: string;
+}

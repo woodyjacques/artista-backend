@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ClubService } from './club.service';
+import { Body, Controller, Post, Get, Patch, Delete, Param } from '@nestjs/common';
 import { CreateClubDto } from './dto/create-club.dto';
-import { UpdateClubDto } from './dto/update-club.dto';
+import { ApiTags } from '@nestjs/swagger';
+import { Club } from './entities/club.entity';
+import { ClubService } from './club.service';
 
-@Controller('club')
+@ApiTags('clubs')
+@Controller('clubs')
 export class ClubController {
-  constructor(private readonly clubService: ClubService) {}
+    constructor(private readonly clubsService: ClubService) {}
 
-  @Post()
-  create(@Body() createClubDto: CreateClubDto) {
-    return this.clubService.create(createClubDto);
-  }
+    @Post()
+    async createClub(@Body() newClub: CreateClubDto) {
+        return await this.clubsService.createClub(newClub);
+    }
 
-  @Get()
-  findAll() {
-    return this.clubService.findAll();
-  }
+    @Get()
+    async findAll(): Promise<Club[]> {
+        return this.clubsService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clubService.findOne(+id);
-  }
+    @Patch(':id')
+    async updateClub(
+        @Param('id') id: string,
+        @Body() updateClub: CreateClubDto,
+    ) {
+        return this.clubsService.updateClub(id, updateClub);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClubDto: UpdateClubDto) {
-    return this.clubService.update(+id, updateClubDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clubService.remove(+id);
-  }
+    @Delete(':id')
+    async deleteClub(@Param('id') id: string) {
+        return this.clubsService.deleteClub(id);
+    }
 }

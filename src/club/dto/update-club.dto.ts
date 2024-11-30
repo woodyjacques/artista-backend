@@ -1,4 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateClubDto } from './create-club.dto';
+import { ApiProperty } from "@nestjs/swagger";
 
-export class UpdateClubDto extends PartialType(CreateClubDto) {}
+export class UpdateClubDto {
+    titulo: string;
+    @ApiProperty()
+    descripcion: string;
+    @ApiProperty()
+    icono: string;
+    @ApiProperty()
+    membresia: string;
+}
